@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <a href="/" id="homeButton"><img src="/static/reader.png" alt="Home" title="Home"></a>
+
+    <h1>{{ title }}</h1>
+    <img src="{{ cover }}" alt="Cover for {{ title }}" class="cover">
+    <input type="text" id="chapterSearch" placeholder="Search chapters...">
+    <div id="chapterResults" class="chapter-list"></div>
+    <script src="/components/manga.js"></script>
+</body>
+
+</html>

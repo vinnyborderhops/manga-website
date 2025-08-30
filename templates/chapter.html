@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ manga_title }} - Chapter {{ chapter_num }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <a href="/" id="homeButton"><img src="/static/reader.png" alt="Home" title="Home"></a>
+
+    <h1>{{ manga_title }} - Chapter {{ chapter_num }}</h1>
+    {% if chapter_title %}<h2>{{ chapter_title }}</h2>{% endif %}
+
+    <div id="topNav">
+        <button id="prevChapterTop">Previous Chapter</button>
+        <button id="nextChapterTop">Next Chapter</button>
+    </div>
+
+    <div id="chapterPages"></div>
+
+    <div id="bottomNav">
+        <button id="prevChapterBottom">Previous Chapter</button>
+        <button id="nextChapterBottom">Next Chapter</button>
+    </div>
+
+    <script src="/components/chapter.js"></script>
+</body>
+
+</html>

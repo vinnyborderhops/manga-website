@@ -1,0 +1,114 @@
+body {
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1,
+h2 {
+    margin: 10px 0;
+}
+
+input[type="text"] {
+    padding: 8px;
+    width: 80%;
+    max-width: 400px;
+    margin: 10px 0 20px 0;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+}
+
+/* Make search results side by side */
+#results,
+#chapterResults {
+    display: flex;
+    flex-wrap: wrap;
+    /* wrap to new line if too many */
+    justify-content: center;
+    /* center horizontally */
+    gap: 15px;
+    /* space between items */
+}
+
+.result,
+.chapter {
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 8px;
+    width: 150px;
+    /* fixed width for grid effect */
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.result:hover,
+.chapter:hover {
+    background-color: #333;
+}
+
+.result img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+
+.cover {
+    max-width: 28%;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+a {
+    color: #f0f0f0;
+    text-decoration: none;
+}
+
+/* Chapter pages */
+#chapterPages img {
+    margin: 10px 0;
+    max-width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Navigation buttons */
+#topNav,
+#bottomNav {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+#homeButton {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000; /* stay on top */
+}
+
+#homeButton img {
+    width: 40px;   /* adjust size */
+    height: 40px;
+    cursor: pointer;
+}
