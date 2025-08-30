@@ -63,6 +63,7 @@ input[type="text"] {
     display: block;
     margin: 0 auto 5px auto;
 }
+
 a {
     color: #f0f0f0;
     text-decoration: none;
@@ -82,33 +83,68 @@ a {
 #bottomNav {
     margin: 20px 0;
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    /* previous = left, next = right */
+    align-items: center;
+    width: 90%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#topNavPrevious,
+#bottomNavPrevious {
+    text-align: left;
+}
+
+#topNavNext,
+#bottomNavNext {
+    text-align: right;
 }
 
 button {
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
-    background-color: #333;
+    background-color: #0070F3;
     color: #f0f0f0;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #0065d8;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #0177ff;
+    transform: scale(.95);
 }
 
 #homeButton {
     position: fixed;
     top: 10px;
     left: 10px;
-    z-index: 1000; /* stay on top */
+    z-index: 1000;
+    /* stay on top */
 }
 
 #homeButton img {
-    width: 40px;   /* adjust size */
+    width: 40px;
     height: 40px;
     cursor: pointer;
+    transition: transform 0.2s ease;
+    /* smooth animation */
+}
+
+#homeButton img:hover {
+    transform: scale(1.05);
+    /* slightly bigger on hover */
+}
+
+#homeButton img:active {
+    transform: scale(0.95);
+    /* shrink slightly when clicked */
 }

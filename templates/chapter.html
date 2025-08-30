@@ -14,18 +14,26 @@
     {% if chapter_title %}<h2>{{ chapter_title }}</h2>{% endif %}
 
     <div id="topNav">
-        <button id="prevChapterTop">Previous Chapter</button>
-        <button id="nextChapterTop">Next Chapter</button>
+        <div id="topNavPrevious">
+            <button id="prevChapterTop">&lt;</button>
+        </div>
+        <div id="topNavNext">
+            <button id="nextChapterTop">&gt;</button>
+        </div>
     </div>
 
     <div id="chapterPages"></div>
 
     <div id="bottomNav">
-        <button id="prevChapterBottom">Previous Chapter</button>
-        <button id="nextChapterBottom">Next Chapter</button>
+        <div id="bottomNavPrevious">
+            <button id="prevChapterBottom">&lt;</button>
+        </div>
+        <div id="bottomNavNext">
+            <button id="nextChapterBottom">&gt;</button>
+        </div>
     </div>
 
-    <script>
+    <<script>
         const chapterPagesDiv = document.getElementById("chapterPages");
         let currentIndex = 0;
         const CHUNK_SIZE = 5;
@@ -101,7 +109,7 @@
         document.getElementById("prevChapterBottom").onclick = () => goToChapter(currentChapterIndex - 1);
         document.getElementById("nextChapterBottom").onclick = () => goToChapter(currentChapterIndex + 1);
 
-    </script>
+    </script>>
 </body>
 
 </html>
