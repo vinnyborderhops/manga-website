@@ -6,7 +6,10 @@ BASE_URL = "https://api.mangadex.org"
 
 cover_cache = {}
 page_cache = {}
-CACHE_TTL = 60*60*24
+CACHE_TTL = 60 * 60 * 24
+
+session = requests.Session()
+
 
 def search_manga(title):
     url = f"{BASE_URL}/manga"
@@ -15,18 +18,26 @@ def search_manga(title):
     response.raise_for_status()
     return response.json()["data"]
 
+
 def get_cover(manga_id):
     url = f"{BASE_URL}/cover"
     params = {"manga[]": manga_id, "limit": 1}
-    r = requests.get(url, params=params)
+
+    # Use the session for the first request
+    r = session.get(url, params=params)
     r.raise_for_status()
     data = r.json()["data"]
     if not data:
         return None
+
     cover_file = data[0]["attributes"]["fileName"]
     cover_url = f"https://uploads.mangadex.org/covers/{manga_id}/{cover_file}"
-    img = requests.get(cover_url)
+
+    # Use the same session for the image request
+    img = session.get(cover_url)
+    img.raise_for_status()
     return img.headers["Content-Type"], img.content
+
 
 def get_chapters(manga_id):
     chapters = []
@@ -66,6 +77,7 @@ def get_chapter(chapter_id):
     chapter = r.json()["data"]
     return chapter
 
+
 def get_chapter_pages(chapter_id):
     url = f"{BASE_URL}/at-home/server/{chapter_id}"
     response = requests.get(url)
@@ -82,8 +94,11 @@ def get_chapter_pages(chapter_id):
     if not page_files:
         raise ValueError(f"Chapter {chapter_id} contains no pages.")
 
-    page_urls = [f"{base_url}/data/{chapter_hash}/{page}" for page in page_files]
+    page_urls = [
+        f"{base_url}/data/{chapter_hash}/{page}" for page in page_files
+    ]
     return page_urls
+
 
 def fetch_page(chapter_id, page_index, url):
     now = time.time()
@@ -97,8 +112,10 @@ def fetch_page(chapter_id, page_index, url):
 
     r = requests.get(url)
     r.raise_for_status()
-    page_cache[chapter_id][page_index] = (now, r.headers["Content-Type"], r.content)
+    page_cache[chapter_id][page_index] = (now, r.headers["Content-Type"],
+                                          r.content)
     return r.headers["Content-Type"], r.content
+
 
 @app.route("/cover/<manga_id>")
 def proxy_cover(manga_id):
@@ -111,14 +128,16 @@ def proxy_cover(manga_id):
     result = get_cover(manga_id)
     if not result:
         return jsonify({"error": "No cover"}), 404
-    
+
     ctype, content = result
     cover_cache[manga_id] = (now, ctype, content)
     return Response(content, content_type=ctype)
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/search")
 def search():
@@ -130,11 +149,7 @@ def search():
     offset = int(request.args.get("offset", 0))
 
     url = f"{BASE_URL}/manga"
-    params = {
-        "title": title,
-        "limit": limit,
-        "offset": offset
-    }
+    params = {"title": title, "limit": limit, "offset": offset}
     r = requests.get(url, params=params)
     r.raise_for_status()
     manga_results = r.json()["data"]
@@ -142,12 +157,18 @@ def search():
 
     for manga in manga_results:
         manga_id = manga["id"]
-        manga_title = manga["attributes"]["title"].get("en") or list(manga["attributes"]["title"].values())[0]
+        manga_title = manga["attributes"]["title"].get("en") or list(
+            manga["attributes"]["title"].values())[0]
         cover_url = f"/cover/{manga_id}" or "https://via.placeholder.com/128x192?text=No+Cover"
-        results.append({"id": manga_id, "title": manga_title, "cover": cover_url})
+        results.append({
+            "id": manga_id,
+            "title": manga_title,
+            "cover": cover_url
+        })
 
     total = r.json()["total"] if "total" in r.json() else None
     return jsonify({"results": results, "total": total})
+
 
 @app.route("/manga/<manga_id>")
 def manga_page(manga_id):
@@ -156,7 +177,8 @@ def manga_page(manga_id):
     r.raise_for_status()
     manga = r.json()["data"]
 
-    title = manga["attributes"]["title"].get("en") or list(manga["attributes"]["title"].values())[0]
+    title = manga["attributes"]["title"].get("en") or list(
+        manga["attributes"]["title"].values())[0]
     cover_url = f"/cover/{manga_id}"
 
     chapters = get_chapters(manga_id)
@@ -171,7 +193,11 @@ def manga_page(manga_id):
             "title": chap_title
         })
 
-    return render_template("manga.html", title=title, cover=cover_url, chapters=chapter_list)
+    return render_template("manga.html",
+                           title=title,
+                           cover=cover_url,
+                           chapters=chapter_list)
+
 
 @app.route("/chapter/<chapter_id>")
 def chapter_page(chapter_id):
@@ -182,7 +208,10 @@ def chapter_page(chapter_id):
     chapter_num = chapter_data["attributes"].get("chapter")
     chapter_title = chapter_data["attributes"].get("title", "")
 
-    manga_id = next((rel["id"] for rel in chapter_data["relationships"] if rel["type"]=="manga"), None)
+    manga_id = next(
+        (rel["id"]
+         for rel in chapter_data["relationships"] if rel["type"] == "manga"),
+        None)
     if not manga_id:
         return "Manga not found", 404
 
@@ -190,28 +219,27 @@ def chapter_page(chapter_id):
     manga_resp = requests.get(manga_url)
     manga_resp.raise_for_status()
     manga_data = manga_resp.json()["data"]
-    manga_title = manga_data["attributes"]["title"].get("en") or list(manga_data["attributes"]["title"].values())[0]
+    manga_title = manga_data["attributes"]["title"].get("en") or list(
+        manga_data["attributes"]["title"].values())[0]
 
     chapters = get_chapters(manga_id)
     chapters_sorted = sorted(
-        chapters,
-        key=lambda x: float(x["attributes"]["chapter"] or 0)
-    )
-    current_index = next((i for i, c in enumerate(chapters_sorted) if c["id"] == chapter_id), 0)
+        chapters, key=lambda x: float(x["attributes"]["chapter"] or 0))
+    current_index = next(
+        (i for i, c in enumerate(chapters_sorted) if c["id"] == chapter_id), 0)
 
     pages = get_chapter_pages(chapter_id)
     total_pages = len(pages)
 
-    return render_template(
-        "chapter.html",
-        manga_title=manga_title,
-        chapter_num=chapter_num,
-        chapter_title=chapter_title,
-        chapter_id=chapter_id,
-        total_pages=total_pages,
-        chapters=chapters_sorted,
-        current_index=current_index
-    )
+    return render_template("chapter.html",
+                           manga_title=manga_title,
+                           chapter_num=chapter_num,
+                           chapter_title=chapter_title,
+                           chapter_id=chapter_id,
+                           total_pages=total_pages,
+                           chapters=chapters_sorted,
+                           current_index=current_index)
+
 
 @app.route("/chapter/<chapter_id>/page/<int:page_index>")
 def serve_chapter_page(chapter_id, page_index):
@@ -225,6 +253,7 @@ def serve_chapter_page(chapter_id, page_index):
 
     ctype, content = fetch_page(chapter_id, page_index, urls[page_index])
     return Response(content, content_type=ctype)
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5500)
