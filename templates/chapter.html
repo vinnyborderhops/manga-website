@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>{{ manga_title }} - Chapter {{ chapter_num }}</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" type="image/png" href="static/reader.png">
 </head>
 
 <body>
@@ -33,7 +34,7 @@
         </div>
     </div>
 
-    <<script>
+    <script>
         const chapterPagesDiv = document.getElementById("chapterPages");
         let currentIndex = 0;
         const CHUNK_SIZE = 5;
@@ -50,35 +51,38 @@
             if (loading || currentIndex >= totalPages) return;
             loading = true;
 
+            const promises = [];
+
             for (let i = 0; i < CHUNK_SIZE && currentIndex < totalPages; i++) {
                 const pageIndex = currentIndex;
                 const img = document.createElement("img");
                 img.src = `/chapter/${chapterId}/page/${pageIndex}`;
                 img.alt = `Page ${pageIndex + 1}`;
                 img.style.maxWidth = "90%";
+                chapterPagesDiv.appendChild(img);
 
-                // Wait until the image is loaded before appending the next one
-                await new Promise((resolve, reject) => {
+                // Preload the image but don't block
+                promises.push(new Promise(resolve => {
                     img.onload = () => resolve();
-                    img.onerror = () => resolve(); // skip errors
-                    chapterPagesDiv.appendChild(img);
-                });
+                    img.onerror = () => resolve();
+                }));
 
                 currentIndex++;
             }
 
-            // Small delay before allowing the next batch
-            await new Promise(resolve => setTimeout(resolve, 50)); // 100ms
+            // Wait for all images to finish loading in the background
+            await Promise.all(promises);
             loading = false;
         }
 
-
+        // Trigger earlier: 500px from bottom
         window.addEventListener("scroll", () => {
-            if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 200) {
+            if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 500) {
                 loadNextBatch();
             }
         });
 
+        // Initial load
         loadNextBatch();
 
         const chapters = {{ chapters| tojson }};
@@ -109,7 +113,7 @@
         document.getElementById("prevChapterBottom").onclick = () => goToChapter(currentChapterIndex - 1);
         document.getElementById("nextChapterBottom").onclick = () => goToChapter(currentChapterIndex + 1);
 
-    </script>>
+    </script>
 </body>
 
 </html>
