@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/styles.css">
-</head>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="shortcut icon" type="image/png" href="static/reader.png">
+  </head>
 
-<body>
-    <a href="/" id="homeButton"><img src="/static/reader.png" alt="Home" title="Home"></a>
+  <body>
+    <a href="/" id="homeButton"><img src="/static/reader.png" alt="Home" title="Home" /></a>
 
     <h1>{{ title }}</h1>
-    <img src="{{ cover }}" alt="Cover for {{ title }}" class="cover">
-    <input type="text" id="chapterSearch" placeholder="Search chapters...">
+    <img src="{{ cover }}" alt="Cover for {{ title }}" class="cover" />
+    <input type="text" id="chapterSearch" placeholder="Search chapters..." />
     <div id="chapterResults" class="chapter-list"></div>
-    <script>
-        const chapterResultsDiv = document.getElementById("chapterResults");
+    <script>const chapterResultsDiv = document.getElementById("chapterResults");
 
         const allChapters = {{ chapters | tojson }};
 
@@ -40,9 +39,6 @@
                 return title.toLowerCase().includes(query) || number.toString().includes(query);
             });
             renderChapters(filtered);
-        });
-
-    </script>
-</body>
-
+        });</script>
+  </body>
 </html>
