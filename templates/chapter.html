@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ manga_title }} - Chapter {{ chapter_num }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" type="image/png" href="/static/reader.png">
+</head>
+
+<body>
+    <a href="/" id="homeButton"><img src="/static/home.svg" alt="Home" title="Home"></a>
+
+    <h1>{{ manga_title }} - Chapter {{ chapter_num }}</h1>
+    {% if chapter_title %}<h2>{{ chapter_title }}</h2>{% endif %}
+
+    <div id="topNav">
+        <div id="topNavPrevious">
+            <button id="prevChapterTop">&lt;</button>
+        </div>
+        <div id="topNavNext">
+            <button id="nextChapterTop">&gt;</button>
+        </div>
+    </div>
+
+    <div id="chapterPages"></div>
+
+    <div id="bottomNav">
+        <div id="bottomNavPrevious">
+            <button id="prevChapterBottom">&lt;</button>
+        </div>
+        <div id="bottomNavNext">
+            <button id="nextChapterBottom">&gt;</button>
+        </div>
+    </div>
+
+    <script>
+        const chapterPagesDiv = document.getElementById("chapterPages");
+        let currentIndex = 0;
+        const CHUNK_SIZE = 5;
+        const totalPages = "{{ total_pages }}";
+        const chapterId = "{{ chapter_id }}";
+        let loading = false;
+
+        const prevTop = document.getElementById("prevChapterTop");
+        const nextTop = document.getElementById("nextChapterTop");
+        const prevBottom = document.getElementById("prevChapterBottom");
+        const nextBottom = document.getElementById("nextChapterBottom");
+
+        async function loadNextBatch() {
+            if (loading || currentIndex >= totalPages) return;
+            loading = true;
+
+            const promises = [];
+
+            for (let i = 0; i < CHUNK_SIZE && currentIndex < totalPages; i++) {
+                const pageIndex = currentIndex;
+                const img = document.createElement("img");
+                img.src = `/chapter/${chapterId}/page/${pageIndex}`;
+                img.id = "chapterPages";
+                img.alt = `Page ${pageIndex + 1}`;
+                chapterPagesDiv.appendChild(img);
+
+                // Preload the image but don't block
+                promises.push(new Promise(resolve => {
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
+                }));
+
+                currentIndex++;
+            }
+
+            // Wait for all images to finish loading in the background
+            await Promise.all(promises);
+            loading = false;
+        }
+
+        // Trigger earlier: 500px from bottom
+        window.addEventListener("scroll", () => {
+            if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 500) {
+                loadNextBatch();
+            }
+        });
+
+        // Initial load
+        loadNextBatch();
+
+        const allChapters = {{ chapters| tojson }};
+        const currentChapterIndex = {{ current_index }};
+
+        // Hide previous button if first chapter
+        if (currentChapterIndex === 0) {
+            prevTop.style.display = "none";
+            prevBottom.style.display = "none";
+        }
+
+        // Hide next button if last chapter
+        if (currentChapterIndex === allChapters.length - 1) {
+            nextTop.style.display = "none";
+            nextBottom.style.display = "none";
+        }
+
+
+        function goToChapter(index) {
+            if (index >= 0 && index < allChapters.length) {
+                window.location.href = `/chapter/${allChapters[index].id}`;
+            }
+        }
+
+        document.getElementById("prevChapterTop").onclick = () => goToChapter(currentChapterIndex - 1);
+        document.getElementById("nextChapterTop").onclick = () => goToChapter(currentChapterIndex + 1);
+
+        document.getElementById("prevChapterBottom").onclick = () => goToChapter(currentChapterIndex - 1);
+        document.getElementById("nextChapterBottom").onclick = () => goToChapter(currentChapterIndex + 1);
+
+    </script>
+</body>
+
+</html>

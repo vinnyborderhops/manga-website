@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="shortcut icon" type="image/png" href="/static/reader.png">
+</head>
+
+<body>
+  <a href="/" id="homeButton"><img src="/static/home.svg" alt="Home" title="Home" /></a>
+
+  <h1>{{ title }}</h1>
+  <img src="{{ cover }}" alt="Cover for {{ title }}" class="cover" />
+
+  <div id="description">
+    <p>{{ description | safe }}</p>
+  </div>
+
+  <input type="text" id="chapterSearch" placeholder="Search chapters..." />
+  <div id="chapterResults" class="chapter-list"></div>
+  <script>
+    const chapterResultsDiv = document.getElementById("chapterResults");
+    const chapterSearchInput = document.getElementById("chapterSearch");
+
+    const allChapters = {{ chapters | tojson }};
+
+    // Save the current state to sessionStorage
+    function saveState() {
+      sessionStorage.setItem("chapterSearchQuery", chapterSearchInput.value);
+    }
+
+    // Render chapters
+    function renderChapters(chapters) {
+      chapterResultsDiv.innerHTML = "";
+      chapters.forEach(ch => {
+        const div = document.createElement("div");
+        div.className = "chapter";
+        div.innerHTML = `<a href="/chapter/${ch.id}">Chapter ${ch.number || '?'}</a>`;
+        div.onclick = () => window.location.href = `/chapter/${ch.id}`;
+        chapterResultsDiv.appendChild(div);
+      });
+    }
+
+    // Load previous state from sessionStorage if it exists
+    function loadState() {
+      const savedQuery = sessionStorage.getItem("chapterSearchQuery") || "";
+      chapterSearchInput.value = savedQuery;
+      const filtered = allChapters.filter(ch => {
+        const title = ch.title || "";
+        const number = ch.number || "";
+        return title.toLowerCase().includes(savedQuery.toLowerCase()) ||
+          number.toString().includes(savedQuery);
+      });
+      renderChapters(filtered);
+    }
+
+    // Initial load
+    loadState();
+
+    // Update chapters on input and save state
+    chapterSearchInput.addEventListener("input", () => {
+      const query = chapterSearchInput.value.toLowerCase().trim();
+      const filtered = allChapters.filter(ch => {
+        const title = ch.title || "";
+        const number = ch.number || "";
+        return title.toLowerCase().includes(query) || number.toString().includes(query);
+      });
+      renderChapters(filtered);
+      saveState();
+    });
+  </script>
+
+</body>
+
+</html>

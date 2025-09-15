@@ -1,0 +1,211 @@
+body {
+    background-color: #121212;
+    color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 10px 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+
+input[type="text"] {
+    padding: 8px;
+    width: 80%;
+    max-width: 400px;
+    margin: 10px 0 20px 0;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+}
+
+#results,
+#chapterResults {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.result,
+.chapter {
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-radius: 8px;
+    width: 150px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.result:hover,
+.chapter:hover {
+    background-color: #333;
+}
+
+.result img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+
+.cover {
+    max-width: 350px;
+    display: block;
+    margin: 0 auto 5px auto;
+}
+
+a {
+    color: #f0f0f0;
+    text-decoration: none;
+}
+
+#chapterPages img {
+    margin: 10px 0;
+    max-width: 67%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#topNav,
+#bottomNav {
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0070F3;
+    color: #f0f0f0;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #0065d8;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #0177ff;
+    transform: scale(.95);
+}
+
+#homeButton {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+#homeButton img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#homeButton img:hover {
+    transform: scale(1.05);
+}
+
+#homeButton img:active {
+    transform: scale(0.95);
+}
+
+#randomButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#randomButton img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#randomButton img:hover {
+    transform: scale(1.05);
+}
+
+#randomButton img:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    input[type="text"] {
+        width: 95%;
+        max-width: none;
+    }
+
+    #results,
+    #chapterResults {
+        gap: 10px;
+    }
+
+    .result,
+    .chapter {
+        width: 45%;
+    }
+
+    #chapterPages img {
+        max-width: 100%;
+    }
+
+    #topNav,
+    #bottomNav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .result,
+    .chapter {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+}
