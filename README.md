@@ -45,7 +45,7 @@ python main.py
 ```
 3. Open in browser
 ```cpp
-http://127.0.0.1:5500/
+http://127.0.0.1:8080/
 ```
 
 ---
@@ -61,4 +61,5 @@ http://127.0.0.1:5500/
 ## 📜 License
 - This project is for educational and personal use only.
 - Manga content is served via [MangaDex](https://mangadex.org/) and is not hosted in this repository.
+
 
