@@ -20,6 +20,7 @@ It allows you to **search manga**, **browse chapters**, and **read pages** direc
 
 - Python **3.8+**
 - Flask
+- Requests
 - BeautifulSoup
 - Markdown
 
@@ -27,6 +28,7 @@ Install dependencies:
 
 ```bash
 pip install flask
+pip install requests
 pip install beautifulsoup4
 pip install markdown
 ```
@@ -61,5 +63,6 @@ http://127.0.0.1:8080/
 ## 📜 License
 - This project is for educational and personal use only.
 - Manga content is served via [MangaDex](https://mangadex.org/) and is not hosted in this repository.
+
 
 
